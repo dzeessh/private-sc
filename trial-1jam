@@ -1,0 +1,42 @@
+#!/bin/bash
+host="$(curl -s icanhazip.com)"
+printf -- "------------------SCRIPT TRIAL SSH & OVPN-------------------\n"
+sleep 0.5
+read -p "Input User     : " user;
+read -p "Input Password : " pass;
+read -p "Input hours    : " exp;
+printf -- "-----MEMERIKSA BINARY AT APAKAH SUDAH DIINSTAL-----\n"
+sleep 0.5
+if [ -f /usr/bin/at ]
+then
+printf -- "-------------BINARY TERINSTALL------------\n"
+else
+printf -- "---BINARY TIDAK DITEMUKAN, MENGINSTALL BINARY---\n" && apt install at -y
+fi
+sleep 0.5
+printf -- "---------------MEMBUAT USER---------------\n"
+useradd -N -M -s /bin/false "$user"
+sleep 0.5
+printf -- "-------------MEMBUAT PASSWORD-------------\n"
+echo "$user":"$pass" | chpasswd
+sleep 0.5
+printf -- "----------MEMBUAT MASA BERLAKU------------\n"
+#delete user dan kill semua koneksi
+echo "userdel -f $user && pkill -u $user" | at now + "$exp" hours >/dev/null 2>&1
+sleep 0.5
+printf -- "-----------------SELESAI------------------\n"
+sleep 0.5
+clear
+printf -- "=============|-- TRIAL SSH & OVPN ACCOUNT --|=============\n"
+printf -- "Host                  : $host\n"
+printf -- "Username              : $user\n"
+printf -- "Password              : $pass\n"
+printf -- "Port OpenSSH          : 22, 143\n"
+printf -- "Port Dropbear         : 444, 445, 446\n"
+printf -- "Port SSL              : 442, 443\n"
+printf -- "Host Squid            : $host\n"
+printf -- "Port Squid            : 8080, 8000, 3128\n"
+printf -- "Port UDPGW            : 7100, 7200, 7300, 7400, 7500\n"
+printf -- "OpenVPN TCP, UDP, SSL : https://panel.dzeessh.com/listip\n"
+printf -- "User Expire           : $exp Hours\n"
+printf -- "======================| DZEESSH.com |======================\n\n"
